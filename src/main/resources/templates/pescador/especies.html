@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Especies Hidrobiológicas', 'especies', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Especies Hidrobiológicas</h1>
+            <p style="color: var(--text-muted); margin-top: 0.35rem;">
+                Explora el catálogo de recursos marinos, peces, moluscos y crustáceos del litoral peruano.
+            </p>
+        </div>
+
+        <div th:if="${#lists.isEmpty(especies)}" class="alert alert-info">
+            <span>ℹ️</span>
+            <span>No hay especies hidrobiológicas registradas en este momento.</span>
+        </div>
+
+        <div class="card-grid" th:unless="${#lists.isEmpty(especies)}">
+            <div class="catalog-card" th:each="esp : ${especies}">
+                <div>
+                    <div class="catalog-card-header">
+                        <h3 class="catalog-card-title" th:text="${esp.nombre}">Anchoveta</h3>
+                        <span class="badge" style="background: var(--color-pescador-light); color: var(--color-pescador);" 
+                              th:text="${esp.tipo != null ? esp.tipo.name() : 'PEZ'}">PEZ</span>
+                    </div>
+                    <div class="catalog-card-subtitle" 
+                         th:text="${esp.nombreCientifico != null && !esp.nombreCientifico.isBlank() ? esp.nombreCientifico : 'Nombre científico no especificado'}">
+                        Engraulis ringens
+                    </div>
+                    <p class="catalog-card-body" 
+                       th:text="${esp.descripcion != null && !esp.descripcion.isBlank() ? (esp.descripcion.length() > 140 ? esp.descripcion.substring(0, 140) + '...' : esp.descripcion) : 'Sin descripción detallada.'}">
+                        Descripción breve de la especie marina.
+                    </p>
+                </div>
+                <div class="catalog-card-footer">
+                    <a th:href="@{/pescador/especies/{id}(id=${esp.id})}" class="btn btn-outline btn-sm">
+                        Ver Ficha Técnica →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

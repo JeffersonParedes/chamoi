@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Panel de Administración', 'inicio', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Panel de Administración</h1>
+            <p style="color: var(--text-muted); margin-top: 0.35rem;">
+                Bienvenido al centro de control del sistema CHAMOI. Monitorea métricas, usuarios y trazabilidad en tiempo real.
+            </p>
+        </div>
+
+        <!-- 4 Tarjetas KPI Grandes -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon admin">👥</div>
+                <div class="kpi-info">
+                    <span class="kpi-value" th:text="${totalUsuarios}">0</span>
+                    <span class="kpi-label">Total Usuarios</span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon primary">🌱</div>
+                <div class="kpi-info">
+                    <span class="kpi-value" th:text="${totalAgricultores}">0</span>
+                    <span class="kpi-label">Agricultores</span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon pesca">🎣</div>
+                <div class="kpi-info">
+                    <span class="kpi-value" th:text="${totalPescadores}">0</span>
+                    <span class="kpi-label">Pescadores</span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background-color: var(--success-bg); color: var(--success-text);">✅</div>
+                <div class="kpi-info">
+                    <span class="kpi-value" th:text="${totalActivos}">0</span>
+                    <span class="kpi-label">Usuarios Activos</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accesos Rápidos -->
+        <div class="detail-card" style="margin-bottom: 2rem;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-main);">
+                Accesos Rápidos
+            </h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a th:href="@{/admin/usuarios}" class="btn btn-admin">
+                    <span>👥</span>
+                    <span>Ver Usuarios</span>
+                </a>
+                <a th:href="@{/admin/auditoria}" class="btn btn-outline">
+                    <span>🛡️</span>
+                    <span>Ver Auditoría</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Últimos 5 Registros de Auditoría -->
+        <div class="table-card" th:if="${ultimasAuditorias != null}">
+            <div style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">Últimas Acciones del Sistema</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.15rem;">Eventos y consultas recientes registradas por auditoría.</p>
+                </div>
+                <a th:href="@{/admin/auditoria}" class="btn btn-outline btn-sm">Ver Todo →</a>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Usuario</th>
+                            <th>Acción</th>
+                            <th>Descripción</th>
+                            <th>IP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(ultimasAuditorias)}">
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                No hay eventos de auditoría registrados todavía.
+                            </td>
+                        </tr>
+                        <tr th:each="aud : ${ultimasAuditorias}">
+                            <td style="white-space: nowrap; font-size: 0.85rem;" th:text="${aud.fechaEvento != null ? #temporals.format(aud.fechaEvento, 'dd/MM/yyyy HH:mm:ss') : '-'}">01/01/2026</td>
+                            <td style="font-weight: 600;" th:text="${aud.usuario != null ? aud.usuario.correo : 'Sistema'}">admin@chamoi.pe</td>
+                            <td>
+                                <span class="badge" style="background-color: var(--color-admin-light); color: var(--color-admin);"
+                                      th:text="${aud.accion}">CONSULTAR</span>
+                            </td>
+                            <td style="font-size: 0.85rem; max-width: 350px; word-break: break-word;" th:text="${aud.descripcion}">Descripción de la acción</td>
+                            <td style="font-family: monospace; font-size: 0.8rem;" th:text="${aud.direccionIp != null ? aud.direccionIp : '-'}">127.0.0.1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

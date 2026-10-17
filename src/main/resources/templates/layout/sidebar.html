@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <aside class="app-sidebar" th:fragment="sidebar(activeNav)">
+        <div class="sidebar-header">
+            <a th:href="@{/}" class="sidebar-logo">
+                <span>🌱🐟</span>
+                <span>CHAMOI</span>
+            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- ADMIN MENU -->
+            <th:block sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/admin/inicio}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'inicio'} ? 'active active-admin' : ''">
+                    <span>📊</span>
+                    <span>Inicio</span>
+                </a>
+                <a th:href="@{/admin/usuarios}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'usuarios'} ? 'active active-admin' : ''">
+                    <span>👥</span>
+                    <span>Usuarios</span>
+                </a>
+                <a th:href="@{/admin/auditoria}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'auditoria'} ? 'active active-admin' : ''">
+                    <span>🛡️</span>
+                    <span>Auditoría</span>
+                </a>
+            </th:block>
+
+            <!-- AGRICULTOR MENU -->
+            <th:block sec:authorize="hasRole('AGRICULTOR')">
+                <a th:href="@{/agricultor/inicio}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'inicio'} ? 'active' : ''">
+                    <span>🌾</span>
+                    <span>Inicio</span>
+                </a>
+                <a th:href="@{/agricultor/perfil}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'perfil'} ? 'active' : ''">
+                    <span>👤</span>
+                    <span>Mi Perfil</span>
+                </a>
+                <a th:href="@{/agricultor/cultivos}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'cultivos'} ? 'active' : ''">
+                    <span>🌽</span>
+                    <span>Cultivos</span>
+                </a>
+                <a th:href="@{/agricultor/analisis/nuevo}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'analisis-nuevo'} ? 'active' : ''">
+                    <span>➕</span>
+                    <span>Nuevo Análisis</span>
+                </a>
+                <a th:href="@{/agricultor/historial}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'historial'} ? 'active' : ''">
+                    <span>📋</span>
+                    <span>Historial</span>
+                </a>
+            </th:block>
+
+            <!-- PESCADOR MENU -->
+            <th:block sec:authorize="hasRole('PESCADOR')">
+                <a th:href="@{/pescador/inicio}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'inicio'} ? 'active active-pescador' : ''">
+                    <span>⚓</span>
+                    <span>Inicio</span>
+                </a>
+                <a th:href="@{/pescador/perfil}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'perfil'} ? 'active active-pescador' : ''">
+                    <span>👤</span>
+                    <span>Mi Perfil</span>
+                </a>
+                <a th:href="@{/pescador/especies}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'especies'} ? 'active active-pescador' : ''">
+                    <span>🐟</span>
+                    <span>Pesca</span>
+                </a>
+                <a th:href="@{/pescador/analisis/nuevo}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'analisis-nuevo'} ? 'active active-pescador' : ''">
+                    <span>➕</span>
+                    <span>Nuevo Análisis</span>
+                </a>
+                <a th:href="@{/pescador/historial}" 
+                   class="nav-link" 
+                   th:classappend="${activeNav == 'historial'} ? 'active active-pescador' : ''">
+                    <span>📋</span>
+                    <span>Historial</span>
+                </a>
+            </th:block>
+        </nav>
+
+        <div class="sidebar-footer">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="sidebar-logout-btn">
+                    <span>🚪</span>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+</body>
+</html>
+

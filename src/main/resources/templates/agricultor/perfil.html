@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Mi Perfil de Agricultor', 'perfil', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="margin-bottom: 1.5rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Perfil Agronómico</h1>
+            <p style="color: var(--text-muted); margin-top: 0.25rem;">
+                Configura los datos de tu terreno y producción para optimizar tus análisis agrícolas.
+            </p>
+        </div>
+
+        <!-- Mensaje de éxito flash -->
+        <div th:if="${mensajeExito}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${mensajeExito}">Perfil actualizado con éxito.</span>
+        </div>
+
+        <div class="form-card">
+            <form th:action="@{/agricultor/perfil}" th:object="${perfilRequest}" method="post">
+                <div class="form-grid">
+                    <!-- Ubicación Política -->
+                    <div class="form-group">
+                        <label for="departamento">Departamento *</label>
+                        <input type="text" id="departamento" th:field="*{departamento}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('departamento')} ? 'is-invalid' : ''"
+                               placeholder="Ej. La Libertad">
+                        <div class="field-error" th:if="${#fields.hasErrors('departamento')}" th:errors="*{departamento}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="provincia">Provincia *</label>
+                        <input type="text" id="provincia" th:field="*{provincia}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('provincia')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Trujillo">
+                        <div class="field-error" th:if="${#fields.hasErrors('provincia')}" th:errors="*{provincia}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="distrito">Distrito</label>
+                        <input type="text" id="distrito" th:field="*{distrito}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('distrito')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Laredo">
+                        <div class="field-error" th:if="${#fields.hasErrors('distrito')}" th:errors="*{distrito}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ubicacionDetalle">Ubicación Detallada (Sector/Fundo)</label>
+                        <input type="text" id="ubicacionDetalle" th:field="*{ubicacionDetalle}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('ubicacionDetalle')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Sector Menocucho, Parcela 12">
+                        <div class="field-error" th:if="${#fields.hasErrors('ubicacionDetalle')}" th:errors="*{ubicacionDetalle}"></div>
+                    </div>
+
+                    <!-- Datos del Terreno -->
+                    <div class="form-group">
+                        <label for="areaTerreno">Área del Terreno</label>
+                        <input type="number" step="0.01" id="areaTerreno" th:field="*{areaTerreno}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('areaTerreno')} ? 'is-invalid' : ''"
+                               placeholder="Ej. 5.50">
+                        <div class="field-error" th:if="${#fields.hasErrors('areaTerreno')}" th:errors="*{areaTerreno}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unidadArea">Unidad de Área</label>
+                        <select id="unidadArea" th:field="*{unidadArea}" class="form-control">
+                            <option value="ha">Hectáreas (ha)</option>
+                            <option value="m2">Metros cuadrados (m²)</option>
+                            <option value="topos">Topos</option>
+                        </select>
+                        <div class="field-error" th:if="${#fields.hasErrors('unidadArea')}" th:errors="*{unidadArea}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipoTerreno">Tipo de Terreno / Suelo</label>
+                        <input type="text" id="tipoTerreno" th:field="*{tipoTerreno}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('tipoTerreno')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Franco-arenoso, Arcilloso, Valle">
+                        <div class="field-error" th:if="${#fields.hasErrors('tipoTerreno')}" th:errors="*{tipoTerreno}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sistemaRiego">Sistema de Riego</label>
+                        <input type="text" id="sistemaRiego" th:field="*{sistemaRiego}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('sistemaRiego')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Goteo, Gravedad, Aspersión">
+                        <div class="field-error" th:if="${#fields.hasErrors('sistemaRiego')}" th:errors="*{sistemaRiego}"></div>
+                    </div>
+
+                    <!-- Objetivos y Situación -->
+                    <div class="form-group full-width">
+                        <label for="objetivo">Objetivo Agrícola</label>
+                        <input type="text" id="objetivo" th:field="*{objetivo}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('objetivo')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Optimizar rendimiento en cosecha de maíz y exportación">
+                        <div class="field-error" th:if="${#fields.hasErrors('objetivo')}" th:errors="*{objetivo}"></div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="situacionActual">Situación Actual / Observaciones</label>
+                        <textarea id="situacionActual" th:field="*{situacionActual}" 
+                                  class="form-control" th:classappend="${#fields.hasErrors('situacionActual')} ? 'is-invalid' : ''"
+                                  placeholder="Describe las condiciones actuales de tu terreno, disponibilidad hídrica o plagas recientes..."></textarea>
+                        <div class="field-error" th:if="${#fields.hasErrors('situacionActual')}" th:errors="*{situacionActual}"></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                    <a th:href="@{/agricultor/inicio}" class="btn btn-outline">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Guardar Perfil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

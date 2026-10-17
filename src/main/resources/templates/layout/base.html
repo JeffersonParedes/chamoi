@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:fragment="layout(titulo, activeNav, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo != null ? titulo + ' - CHAMOI' : 'CHAMOI - Plataforma de Análisis'}">CHAMOI</title>
+    <link rel="stylesheet" th:href="@{/css/chamoi.css}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div th:replace="~{layout/sidebar :: sidebar(activeNav=${activeNav})}"></div>
+
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-title">
+                    <h2 th:text="${titulo}">Dashboard</h2>
+                </div>
+                <div class="user-profile">
+                    <div class="user-meta">
+                        <div class="name" th:text="${usuarioNombre != null ? usuarioNombre : #authentication.name}">Usuario</div>
+                        <div class="role" 
+                             th:classappend="${usuarioRol == 'ADMIN' ? 'role-badge-admin' : (usuarioRol == 'PESCADOR' ? 'role-badge-pescador' : 'role-badge-agricultor')}"
+                             th:text="${usuarioRol != null ? usuarioRol : 'USUARIO'}">ROL</div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Body -->
+            <main class="main-content">
+                <th:block th:replace="${content}" />
+            </main>
+        </div>
+    </div>
+</body>
+</html>
+

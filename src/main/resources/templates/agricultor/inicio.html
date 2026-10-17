@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Panel del Agricultor', 'inicio', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">
+                Hola <span th:text="${usuarioNombre}">Agricultor</span> 👋
+            </h1>
+            <p style="color: var(--text-muted); margin-top: 0.35rem;">
+                Bienvenido al portal inteligente para el sector agrícola de CHAMOI.
+            </p>
+        </div>
+
+        <!-- Alerta si perfil incompleto -->
+        <div th:if="${!perfilCompleto}" class="alert alert-warning">
+            <span>⚠️</span>
+            <div>
+                <strong>Tu perfil agronómico está incompleto.</strong>
+                Para recibir recomendaciones precisas y análisis de suelos/clima, por favor 
+                <a th:href="@{/agricultor/perfil}">completa tu perfil de agricultor aquí</a>.
+            </div>
+        </div>
+
+        <div th:if="${perfilCompleto}" class="alert alert-success">
+            <span>✅</span>
+            <div>
+                <strong>¡Perfil completo!</strong> Tu información agronómica está lista para generar análisis inteligentes.
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon primary">📈</div>
+                <div class="kpi-info">
+                    <span class="kpi-value" th:text="${totalAnalisis}">0</span>
+                    <span class="kpi-label">Análisis Realizados</span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" th:classappend="${perfilCompleto ? 'primary' : 'warning'}">
+                    <span th:text="${perfilCompleto ? '✅' : '⏳'}">✅</span>
+                </div>
+                <div class="kpi-info">
+                    <span class="kpi-value" style="font-size: 1.35rem;" th:text="${perfilCompleto ? 'Completo' : 'Incompleto'}">Completo</span>
+                    <span class="kpi-label">Estado del Perfil</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accesos directos -->
+        <div class="detail-card" style="margin-bottom: 2rem;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">Módulos Disponibles</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a th:href="@{/agricultor/analisis/nuevo}" class="btn btn-primary">
+                    <span>➕</span>
+                    <span>Solicitar Nuevo Análisis</span>
+                </a>
+                <a th:href="@{/agricultor/historial}" class="btn btn-outline">
+                    <span>📋</span>
+                    <span>Ver Historial de Análisis</span>
+                </a>
+                <a th:href="@{/agricultor/perfil}" class="btn btn-outline">
+                    <span>👤</span>
+                    <span>Actualizar Mi Perfil</span>
+                </a>
+                <a th:href="@{/agricultor/cultivos}" class="btn btn-outline">
+                    <span>🌽</span>
+                    <span>Catálogo de Cultivos</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Últimos 3 Análisis -->
+        <div class="table-card" th:if="${ultimosAnalisis != null && !#lists.isEmpty(ultimosAnalisis)}">
+            <div style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">Últimos Análisis Realizados</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.15rem;">Evaluaciones agroclimáticas más recientes.</p>
+                </div>
+                <a th:href="@{/agricultor/historial}" class="btn btn-outline btn-sm">Ver Todos →</a>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cultivo</th>
+                            <th>Consulta</th>
+                            <th>Estado</th>
+                            <th>Riesgo</th>
+                            <th style="text-align: right;">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="a : ${ultimosAnalisis}">
+                            <td style="white-space: nowrap; font-size: 0.85rem;" th:text="${a.fechaSolicitud != null ? #temporals.format(a.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '-'}">01/01/2026</td>
+                            <td style="font-weight: 600;" th:text="${a.situacionAgricola != null && a.situacionAgricola.cultivo != null ? a.situacionAgricola.cultivo.nombre : 'General'}">Maíz</td>
+                            <td style="font-size: 0.85rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" th:text="${a.resumenSolicitud}">Consulta</td>
+                            <td>
+                                <span class="badge" th:classappend="${a.estado != null && a.estado.name() == 'COMPLETADO' ? 'badge-activo' : 'badge-info'}" th:text="${a.estado}">COMPLETADO</span>
+                            </td>
+                            <td>
+                                <span th:if="${a.resultadoAnalisis != null}" class="prioridad-tag"
+                                      th:classappend="${a.resultadoAnalisis.nivelRiesgo != null && a.resultadoAnalisis.nivelRiesgo.name() == 'ALTO' ? 'alta' : (a.resultadoAnalisis.nivelRiesgo != null && a.resultadoAnalisis.nivelRiesgo.name() == 'MEDIO' ? 'media' : 'baja')}"
+                                      th:text="${a.resultadoAnalisis.nivelRiesgo}">MEDIO</span>
+                                <span th:unless="${a.resultadoAnalisis != null}">-</span>
+                            </td>
+                            <td style="text-align: right;">
+                                <a th:href="@{/agricultor/analisis/{id}(id=${a.id})}" class="btn btn-outline btn-sm">Ver →</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

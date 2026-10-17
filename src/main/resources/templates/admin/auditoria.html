@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Registro de Auditoría', 'auditoria', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Registro de Auditoría</h1>
+                <p style="color: var(--text-muted); margin-top: 0.25rem;">
+                    Monitoreo de seguridad y trazabilidad de eventos del sistema.
+                </p>
+            </div>
+            <a th:href="@{/admin/inicio}" class="btn btn-outline">← Volver al Inicio</a>
+        </div>
+
+        <div class="table-card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha y Hora</th>
+                            <th>Usuario</th>
+                            <th>Acción</th>
+                            <th>Entidad</th>
+                            <th>ID Entidad</th>
+                            <th>Descripción</th>
+                            <th>Dirección IP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(registros)}">
+                            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                No se encontraron registros de auditoría.
+                            </td>
+                        </tr>
+                        <tr th:each="r : ${registros}">
+                            <td th:text="${r.id}">1</td>
+                            <td th:text="${r.fechaEvento != null ? #temporals.format(r.fechaEvento, 'dd/MM/yyyy HH:mm:ss') : '-'}">01/01/2026 12:00:00</td>
+                            <td style="font-weight: 600;" th:text="${r.usuario != null ? r.usuario.correo : 'Sistema'}">admin@chamoi.pe</td>
+                            <td>
+                                <span class="badge" style="background-color: var(--color-admin-light); color: var(--color-admin);"
+                                      th:text="${r.accion}">LOGIN</span>
+                            </td>
+                            <td th:text="${r.entidad != null ? r.entidad : '-'}">Usuario</td>
+                            <td th:text="${r.entidadId != null ? r.entidadId : '-'}">1</td>
+                            <td style="font-size: 0.85rem; max-width: 280px; word-break: break-word;" th:text="${r.descripcion}">Descripción del evento</td>
+                            <td style="font-family: monospace; font-size: 0.8rem;" th:text="${r.direccionIp != null ? r.direccionIp : '-'}">127.0.0.1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginación -->
+            <div th:if="${pagina.totalPages > 1}" style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 1rem;">
+                <div style="font-size: 0.875rem; color: var(--text-muted);">
+                    Mostrando <span style="font-weight: 700; color: var(--text-main);" th:text="${pagina.numberOfElements}">10</span> 
+                    de <span style="font-weight: 700; color: var(--text-main);" th:text="${pagina.totalElements}">100</span> registros
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <a th:if="${pagina.hasPrevious()}" 
+                       th:href="@{/admin/auditoria(pagina=${pagina.number - 1})}" 
+                       class="btn btn-outline btn-sm">
+                        ← Anterior
+                    </a>
+
+                    <span style="font-size: 0.875rem; font-weight: 600; color: var(--text-main); padding: 0.35rem 0.75rem;">
+                        Página <span th:text="${pagina.number + 1}">1</span> de <span th:text="${pagina.totalPages}">10</span>
+                    </span>
+
+                    <a th:if="${pagina.hasNext()}" 
+                       th:href="@{/admin/auditoria(pagina=${pagina.number + 1})}" 
+                       class="btn btn-outline btn-sm">
+                        Siguiente →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

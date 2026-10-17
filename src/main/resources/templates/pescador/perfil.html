@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Mi Perfil de Pescador', 'perfil', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="margin-bottom: 1.5rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Perfil Pesquero</h1>
+            <p style="color: var(--text-muted); margin-top: 0.25rem;">
+                Configura los datos de tus faenas marítimas y embarcación para optimizar tus análisis pesqueros.
+            </p>
+        </div>
+
+        <!-- Mensaje de éxito flash -->
+        <div th:if="${mensajeExito}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${mensajeExito}">Perfil de pescador actualizado con éxito.</span>
+        </div>
+
+        <div class="form-card">
+            <form th:action="@{/pescador/perfil}" th:object="${perfilRequest}" method="post">
+                <div class="form-grid">
+                    <!-- Ubicación Base -->
+                    <div class="form-group">
+                        <label for="departamento">Departamento Costero *</label>
+                        <input type="text" id="departamento" th:field="*{departamento}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('departamento')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Ancash">
+                        <div class="field-error" th:if="${#fields.hasErrors('departamento')}" th:errors="*{departamento}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="provincia">Provincia / Puerto Base *</label>
+                        <input type="text" id="provincia" th:field="*{provincia}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('provincia')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Santa (Chimbote)">
+                        <div class="field-error" th:if="${#fields.hasErrors('provincia')}" th:errors="*{provincia}"></div>
+                    </div>
+
+                    <!-- Datos Operativos de Pesca -->
+                    <div class="form-group full-width">
+                        <label for="zonaActividad">Zona de Actividad Marítima / Caletas Frecuentes</label>
+                        <input type="text" id="zonaActividad" th:field="*{zonaActividad}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('zonaActividad')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Bahía de Samanco, millas 5 a 15 costa afuera">
+                        <div class="field-error" th:if="${#fields.hasErrors('zonaActividad')}" th:errors="*{zonaActividad}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipoPesca">Tipo de Pesca</label>
+                        <input type="text" id="tipoPesca" th:field="*{tipoPesca}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('tipoPesca')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Artesanal, Menor escala, Cortina, Espinel">
+                        <div class="field-error" th:if="${#fields.hasErrors('tipoPesca')}" th:errors="*{tipoPesca}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="embarcacion">Nombre / Matrícula de la Embarcación</label>
+                        <input type="text" id="embarcacion" th:field="*{embarcacion}" 
+                               class="form-control" th:classappend="${#fields.hasErrors('embarcacion')} ? 'is-invalid' : ''"
+                               placeholder="Ej. Don Lucho II (CO-1234-BM)">
+                        <div class="field-error" th:if="${#fields.hasErrors('embarcacion')}" th:errors="*{embarcacion}"></div>
+                    </div>
+
+                    <!-- Situación Actual -->
+                    <div class="form-group full-width">
+                        <label for="situacionActual">Situación Actual / Observaciones Oceanográficas</label>
+                        <textarea id="situacionActual" th:field="*{situacionActual}" 
+                                  class="form-control" th:classappend="${#fields.hasErrors('situacionActual')} ? 'is-invalid' : ''"
+                                  placeholder="Describe las condiciones del mar, temperatura superficial detectada, veda o comportamiento de cardúmenes..."></textarea>
+                        <div class="field-error" th:if="${#fields.hasErrors('situacionActual')}" th:errors="*{situacionActual}"></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                    <a th:href="@{/pescador/inicio}" class="btn btn-outline">Cancelar</a>
+                    <button type="submit" class="btn btn-pescador">Guardar Perfil</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

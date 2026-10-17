@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Productor - CHAMOI</title>
+    <link rel="stylesheet" th:href="@{/css/chamoi.css}">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <span class="brand-badge">🌾 CHAMOI 🐟</span>
+                <h1>Crear Cuenta</h1>
+                <p>Únete a la red nacional de productores agrícolas y pesqueros</p>
+            </div>
+
+            <!-- Formulario de Registro -->
+            <form th:action="@{/registro}" th:object="${registroRequest}" method="post">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombres">Nombres</label>
+                        <input type="text" 
+                               id="nombres" 
+                               th:field="*{nombres}" 
+                               class="form-control" 
+                               placeholder="Tus nombres" 
+                               required>
+                        <div class="field-error" th:if="${#fields.hasErrors('nombres')}" th:errors="*{nombres}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apellidos">Apellidos</label>
+                        <input type="text" 
+                               id="apellidos" 
+                               th:field="*{apellidos}" 
+                               class="form-control" 
+                               placeholder="Tus apellidos" 
+                               required>
+                        <div class="field-error" th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="correo">Correo Electrónico</label>
+                    <input type="email" 
+                           id="correo" 
+                           th:field="*{correo}" 
+                           class="form-control" 
+                           placeholder="tu.correo@ejemplo.pe" 
+                           required>
+                    <div class="field-error" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña (mínimo 6 caracteres)</label>
+                    <input type="password" 
+                           id="password" 
+                           th:field="*{password}" 
+                           class="form-control" 
+                           placeholder="••••••••" 
+                           required>
+                    <div class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono / Celular (opcional)</label>
+                    <input type="tel" 
+                           id="telefono" 
+                           th:field="*{telefono}" 
+                           class="form-control" 
+                           placeholder="Ej. 987654321">
+                    <div class="field-error" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de Productor</label>
+                    <div class="role-selector">
+                        <label class="role-option">
+                            <input type="radio" th:field="*{rolNombre}" value="AGRICULTOR" required checked>
+                            <div class="role-card agricola">
+                                <span class="icon">🌱</span>
+                                <span class="title">Agricultor</span>
+                            </div>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" th:field="*{rolNombre}" value="PESCADOR" required>
+                            <div class="role-card pesquera">
+                                <span class="icon">🐟</span>
+                                <span class="title">Pescador</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="field-error" th:if="${#fields.hasErrors('rolNombre')}" th:errors="*{rolNombre}"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Registrarme</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>¿Ya tienes una cuenta? <a th:href="@{/login}">Inicia sesión</a></p>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; CHAMOI - Análisis Agrícola y Pesquero del Perú
+    </footer>
+</body>
+</html>
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Detalle de Cultivo', 'cultivos', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);" th:text="${cultivo.nombre}">Papa Huayro</h1>
+                <p style="color: var(--text-muted); margin-top: 0.25rem;">Ficha técnica e información agronómica de la especie vegetal.</p>
+            </div>
+            <a th:href="@{/agricultor/cultivos}" class="btn btn-outline">← Volver al Catálogo</a>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-row">
+                <span class="detail-label">ID de Registro:</span>
+                <span class="detail-value" style="font-weight: 700;" th:text="${cultivo.id}">1</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Nombre Común:</span>
+                <span class="detail-value" style="font-size: 1.1rem; font-weight: 700;" th:text="${cultivo.nombre}">Maíz</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Tipo de Cultivo:</span>
+                <span class="detail-value">
+                    <span class="badge badge-activo" th:text="${cultivo.tipo != null ? cultivo.tipo.name() : 'OTRO'}">CEREAL</span>
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Estado en Plataforma:</span>
+                <span class="detail-value">
+                    <span class="badge" 
+                          th:classappend="${cultivo.estado != null && cultivo.estado.name() == 'ACTIVO' ? 'badge-activo' : 'badge-inactivo'}"
+                          th:text="${cultivo.estado != null ? cultivo.estado.name() : 'ACTIVO'}">ACTIVO</span>
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Descripción Técnica:</span>
+                <span class="detail-value" style="line-height: 1.6;" th:text="${cultivo.descripcion != null && !cultivo.descripcion.isBlank() ? cultivo.descripcion : 'Sin descripción técnica registrada.'}">
+                    Descripción detallada del cultivo.
+                </span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

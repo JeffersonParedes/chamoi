@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Gestión de Usuarios', 'usuarios', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Gestión de Usuarios</h1>
+            <p style="color: var(--text-muted); margin-top: 0.25rem;">
+                Consulta, filtra y supervisa los usuarios de la plataforma CHAMOI con paginación y búsqueda avanzada.
+            </p>
+        </div>
+
+        <!-- 4 Tarjetas KPI -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon admin">👥</div>
+                <div class="kpi-info">
+                    <span class="kpi-value" th:text="${stats != null ? stats['total'] : 0}">0</span>
+                    <span class="kpi-label">Total Usuarios</span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon primary">🌱</div>
+                <div class="kpi-info">
+                    <span class="kpi-value" th:text="${stats != null ? stats['agricultores'] : 0}">0</span>
+                    <span class="kpi-label">Agricultores</span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon pesca">🎣</div>
+                <div class="kpi-info">
+                    <span class="kpi-value" th:text="${stats != null ? stats['pescadores'] : 0}">0</span>
+                    <span class="kpi-label">Pescadores</span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background-color: var(--success-bg); color: var(--success-text);">✅</div>
+                <div class="kpi-info">
+                    <span class="kpi-value" th:text="${stats != null ? stats['activos'] : 0}">0</span>
+                    <span class="kpi-label">Usuarios Activos</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla y Filtros -->
+        <div class="table-card">
+            <!-- Barra de Búsqueda y Filtros -->
+            <form th:action="@{/admin/usuarios}" method="get" class="table-filter-bar">
+                <div style="flex: 1; min-width: 250px;">
+                    <input type="text" name="busqueda" th:value="${busquedaFiltro}" 
+                           class="form-control" style="padding: 0.55rem 0.85rem;"
+                           placeholder="🔍 Buscar por nombre, apellido o correo...">
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <label for="filtroRol" style="margin-bottom: 0; font-size: 0.85rem; font-weight: 600;">Rol:</label>
+                    <select id="filtroRol" name="rol" class="form-control" style="width: auto; padding: 0.55rem 0.75rem;">
+                        <option value="" th:selected="${rolFiltro == ''}">Todos los Roles</option>
+                        <option value="ADMIN" th:selected="${rolFiltro == 'ADMIN'}">Administrador</option>
+                        <option value="AGRICULTOR" th:selected="${rolFiltro == 'AGRICULTOR'}">Agricultor</option>
+                        <option value="PESCADOR" th:selected="${rolFiltro == 'PESCADOR'}">Pescador</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <label for="filtroEstado" style="margin-bottom: 0; font-size: 0.85rem; font-weight: 600;">Estado:</label>
+                    <select id="filtroEstado" name="estado" class="form-control" style="width: auto; padding: 0.55rem 0.75rem;">
+                        <option value="" th:selected="${estadoFiltro == ''}">Todos los Estados</option>
+                        <option value="ACTIVO" th:selected="${estadoFiltro == 'ACTIVO'}">Activo</option>
+                        <option value="INACTIVO" th:selected="${estadoFiltro == 'INACTIVO'}">Inactivo</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="btn btn-admin btn-sm">Filtrar</button>
+                    <a th:href="@{/admin/usuarios}" class="btn btn-outline btn-sm">Limpiar</a>
+                </div>
+            </form>
+
+            <!-- Tabla de Datos -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombres y Apellidos</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Fecha Registro</th>
+                            <th style="text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(usuarios)}">
+                            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2.5rem;">
+                                No se encontraron usuarios con los criterios de búsqueda o filtros seleccionados.
+                            </td>
+                        </tr>
+                        <tr th:each="u : ${usuarios}">
+                            <td th:text="${u.id}">1</td>
+                            <td style="font-weight: 600;" th:text="${u.nombres + ' ' + u.apellidos}">Juan Pérez</td>
+                            <td th:text="${u.correo}">juan@chamoi.pe</td>
+                            <td>
+                                <span class="role"
+                                      th:classappend="${u.rol != null && u.rol.nombre == 'ADMIN' ? 'role-badge-admin' : (u.rol != null && u.rol.nombre == 'PESCADOR' ? 'role-badge-pescador' : 'role-badge-agricultor')}"
+                                      th:text="${u.rol != null ? u.rol.nombre : 'SIN ROL'}">AGRICULTOR</span>
+                            </td>
+                            <td>
+                                <span class="badge" 
+                                      th:classappend="${u.estado != null && u.estado.name() == 'ACTIVO' ? 'badge-activo' : 'badge-inactivo'}"
+                                      th:text="${u.estado != null ? u.estado.name() : 'DESCONOCIDO'}">ACTIVO</span>
+                            </td>
+                            <td th:text="${u.fechaRegistro != null ? #temporals.format(u.fechaRegistro, 'dd/MM/yyyy HH:mm') : '-'}">01/01/2026</td>
+                            <td style="text-align: right;">
+                                <a th:href="@{/admin/usuarios/{id}(id=${u.id})}" class="btn btn-outline btn-sm">
+                                    Ver Detalle
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer con Contador y Paginación -->
+            <div style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 1rem;">
+                <div style="font-size: 0.875rem; color: var(--text-muted);">
+                    Mostrando <span style="font-weight: 700; color: var(--text-main);" th:text="${pagina.numberOfElements}">0</span> 
+                    de <span style="font-weight: 700; color: var(--text-main);" th:text="${pagina.totalElements}">0</span> usuarios
+                </div>
+
+                <div th:if="${pagina.totalPages > 1}" style="display: flex; gap: 0.5rem; align-items: center;">
+                    <a th:if="${pagina.hasPrevious()}" 
+                       th:href="@{/admin/usuarios(rol=${rolFiltro}, estado=${estadoFiltro}, busqueda=${busquedaFiltro}, pagina=${pagina.number - 1})}" 
+                       class="btn btn-outline btn-sm">
+                        ← Anterior
+                    </a>
+
+                    <span style="font-size: 0.875rem; font-weight: 600; color: var(--text-main); padding: 0.35rem 0.75rem;">
+                        Página <span th:text="${pagina.number + 1}">1</span> de <span th:text="${pagina.totalPages}">1</span>
+                    </span>
+
+                    <a th:if="${pagina.hasNext()}" 
+                       th:href="@{/admin/usuarios(rol=${rolFiltro}, estado=${estadoFiltro}, busqueda=${busquedaFiltro}, pagina=${pagina.number + 1})}" 
+                       class="btn btn-outline btn-sm">
+                        Siguiente →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

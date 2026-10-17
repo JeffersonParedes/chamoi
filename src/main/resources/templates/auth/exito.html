@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido - CHAMOI</title>
+    <link rel="stylesheet" th:href="@{/css/chamoi.css}">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="welcome-card">
+            <span class="brand-badge">🌾 CHAMOI 🐟</span>
+            <h1>¡Bienvenido, <span th:text="${nombre}">Usuario</span>!</h1>
+            
+            <p style="margin-top: 0.5rem; color: var(--text-muted);">
+                Has iniciado sesión exitosamente en la plataforma.
+            </p>
+
+            <div>
+                <span class="role-badge"
+                      th:classappend="${rol == 'ROLE_ADMIN' or rol == 'ADMIN'} ? 'badge-admin' : (${rol == 'ROLE_PESCADOR' or rol == 'PESCADOR'} ? 'badge-pescador' : 'badge-agricultor')"
+                      th:text="'Rol: ' + ${rol}">
+                    Rol: AGRICULTOR
+                </span>
+            </div>
+
+            <div class="alert alert-info" style="margin: 1.5rem 0; text-align: left;">
+                <span>🚀</span>
+                <div>
+                    <strong>Fase 2 completada:</strong> La autenticación y autorización están operativas. Próximamente verás tu dashboard completo aquí en la Fase 3.
+                </div>
+            </div>
+
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+            </form>
+        </div>
+    </div>
+    <footer>
+        &copy; CHAMOI - Análisis Agrícola y Pesquero del Perú
+    </footer>
+</body>
+</html>
+

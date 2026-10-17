@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Resultado del Análisis Agrícola', 'historial', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <!-- Notificación Flash -->
+        <div th:if="${successMsg}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${successMsg}">Análisis generado correctamente</span>
+        </div>
+
+        <!-- Encabezado con Botones -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem;">
+                    <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">
+                        Análisis #<span th:text="${analisis.id}">1</span>
+                    </h1>
+                    <span class="badge" 
+                          th:classappend="${analisis.estado != null && analisis.estado.name() == 'COMPLETADO' ? 'badge-activo' : 'badge-inactivo'}"
+                          th:text="${analisis.estado}">COMPLETADO</span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">
+                    Cultivo: <strong th:text="${analisis.situacionAgricola != null && analisis.situacionAgricola.cultivo != null ? analisis.situacionAgricola.cultivo.nombre : 'General'}">Maíz</strong> 
+                    | Fecha de solicitud: <span th:text="${analisis.fechaSolicitud != null ? #temporals.format(analisis.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '-'}">01/01/2026</span>
+                </p>
+                <p style="color: var(--text-main); font-style: italic; margin-top: 0.5rem; background: #fff; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                    " <span th:text="${analisis.resumenSolicitud}">Consulta del agricultor</span> "
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <a th:href="@{/agricultor/analisis/nuevo}" class="btn btn-primary">➕ Nuevo Análisis</a>
+                <a th:href="@{/agricultor/historial}" class="btn btn-outline">📋 Ver Historial</a>
+            </div>
+        </div>
+
+        <!-- Bloque de Evaluación de Riesgo y Confianza -->
+        <div th:if="${resultado != null}" class="detail-card" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div>
+                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">
+                        Evaluación de Nivel de Riesgo
+                    </span>
+                    <span class="riesgo-badge" 
+                          th:classappend="${resultado.nivelRiesgo != null && resultado.nivelRiesgo.name() == 'ALTO' ? 'riesgo-alto' : (resultado.nivelRiesgo != null && resultado.nivelRiesgo.name() == 'MEDIO' ? 'riesgo-medio' : 'riesgo-bajo')}"
+                          th:text="${resultado.nivelRiesgo != null ? 'RIESGO ' + resultado.nivelRiesgo.name() : 'RIESGO NO DETERMINADO'}">
+                        RIESGO MEDIO
+                    </span>
+                </div>
+
+                <div style="text-align: right;">
+                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.25rem;">
+                        Nivel de Confianza
+                    </span>
+                    <span style="font-size: 1.75rem; font-weight: 800; color: var(--primary);" 
+                          th:text="${resultado.nivelConfianza != null ? (resultado.nivelConfianza + '%') : '75%'}">
+                        75.00%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Resumen -->
+            <div style="background: var(--bg-main); padding: 1.25rem; border-radius: var(--radius-sm); border-left: 4px solid var(--primary); margin-bottom: 1.25rem;">
+                <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--text-main);">Resumen Ejecutivo:</h4>
+                <p style="font-size: 0.95rem; color: var(--text-main); line-height: 1.6;" th:text="${resultado.resumen}">
+                    Resumen del análisis.
+                </p>
+            </div>
+
+            <!-- Interpretación -->
+            <div style="margin-bottom: 1.25rem;">
+                <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Interpretación Técnica:</h4>
+                <p style="font-size: 0.925rem; color: var(--text-muted); line-height: 1.6; white-space: pre-line;" th:text="${resultado.interpretacionIa}">
+                    Interpretación técnica detallada.
+                </p>
+            </div>
+        </div>
+
+        <!-- Recomendaciones Clave -->
+        <div class="detail-card" style="margin-bottom: 2rem;">
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 1.25rem; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+                <span>💡</span>
+                <span>Recomendaciones Operativas</span>
+            </h3>
+
+            <div th:if="${#lists.isEmpty(recomendaciones)}" class="alert alert-info">
+                <span>ℹ️</span>
+                <span>No se generaron recomendaciones específicas adicionales.</span>
+            </div>
+
+            <div th:each="rec : ${recomendaciones}" class="recomendacion-card"
+                 th:classappend="${rec.prioridad != null && rec.prioridad.name() == 'ALTA' ? 'alta' : ''}">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; gap: 0.5rem;">
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);" th:text="${rec.titulo}">Título Recomendación</h4>
+                    <span class="prioridad-tag"
+                          th:classappend="${rec.prioridad != null && rec.prioridad.name() == 'ALTA' ? 'alta' : (rec.prioridad != null && rec.prioridad.name() == 'MEDIA' ? 'media' : 'baja')}"
+                          th:text="${rec.prioridad != null ? rec.prioridad.name() : 'MEDIA'}">ALTA</span>
+                </div>
+                <p style="font-size: 0.925rem; color: var(--text-main); line-height: 1.5; margin-bottom: 0.5rem;" th:text="${rec.descripcion}">
+                    Descripción de la recomendación para el agricultor.
+                </p>
+                <div style="font-size: 0.8rem; color: var(--text-muted);" th:if="${rec.motivo != null}">
+                    <strong>Motivo:</strong> <span th:text="${rec.motivo}">Condición detectada</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aviso de Limitaciones -->
+        <div th:if="${resultado != null && resultado.limitaciones != null}" class="alert alert-info" style="font-size: 0.85rem;">
+            <span>⚠️</span>
+            <div>
+                <strong>Aviso de limitaciones del modelo:</strong>
+                <span th:text="${resultado.limitaciones}">Limitaciones</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

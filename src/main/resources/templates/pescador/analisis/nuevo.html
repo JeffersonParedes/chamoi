@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Nuevo Análisis Pesquero', 'analisis-nuevo', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Solicitar Análisis Pesquero</h1>
+            <p style="color: var(--text-muted); margin-top: 0.25rem;">
+                Ingresa los datos de tu faena marítima y formula tu consulta para evaluar condiciones oceanográficas y riesgos de zarpe.
+            </p>
+        </div>
+
+        <div class="form-card">
+            <form th:action="@{/pescador/analisis}" th:object="${analisisRequest}" method="post">
+                <div class="form-grid">
+                    <!-- Selector de Especie -->
+                    <div class="form-group">
+                        <label for="especieId">Especie Hidrobiológica Objetivo</label>
+                        <select id="especieId" th:field="*{especieId}" class="form-control">
+                            <option value="">-- Selecciona una especie --</option>
+                            <option th:each="e : ${especies}" th:value="${e.id}" th:text="${e.nombre + (e.nombreCientifico != null ? ' (' + e.nombreCientifico + ')' : '')}"></option>
+                        </select>
+                    </div>
+
+                    <!-- Zona de Actividad -->
+                    <div class="form-group">
+                        <label for="zonaActividad">Zona de Actividad Marítima / Caleta</label>
+                        <input type="text" id="zonaActividad" th:field="*{zonaActividad}" class="form-control"
+                               placeholder="Ej. Bahía Samanco, 8 millas costa afuera">
+                    </div>
+
+                    <!-- Tipo de Pesca -->
+                    <div class="form-group">
+                        <label for="tipoPesca">Arte / Tipo de Pesca</label>
+                        <input type="text" id="tipoPesca" th:field="*{tipoPesca}" class="form-control"
+                               placeholder="Ej. Cortina, Espinel, Cerco artesanal">
+                    </div>
+
+                    <!-- Cantidad Estimada -->
+                    <div class="form-group">
+                        <label for="cantidadEstimada">Captura Estimada Esperada</label>
+                        <input type="number" step="0.01" id="cantidadEstimada" th:field="*{cantidadEstimada}" class="form-control"
+                               placeholder="Ej. 500">
+                    </div>
+
+                    <!-- Unidad de Cantidad -->
+                    <div class="form-group">
+                        <label for="unidadCantidad">Unidad de Medida</label>
+                        <select id="unidadCantidad" th:field="*{unidadCantidad}" class="form-control">
+                            <option value="kg">Kilogramos (kg)</option>
+                            <option value="ton">Toneladas (ton)</option>
+                            <option value="cajas">Cajas</option>
+                        </select>
+                    </div>
+
+                    <!-- Objetivo -->
+                    <div class="form-group">
+                        <label for="objetivo">Objetivo de la Faena</label>
+                        <input type="text" id="objetivo" th:field="*{objetivo}" class="form-control"
+                               placeholder="Ej. Abastecimiento de mercado local o consumo humano directo">
+                    </div>
+
+                    <!-- Condiciones Observadas -->
+                    <div class="form-group full-width">
+                        <label for="condicionesObservadas">Condiciones Observadas en el Mar (Opcional)</label>
+                        <textarea id="condicionesObservadas" th:field="*{condicionesObservadas}" class="form-control"
+                                  placeholder="Describe si observas oleaje anómalo, vientos racheados, presencia de aves marinas o cambios de temperatura superficial..."></textarea>
+                    </div>
+
+                    <!-- Pregunta para CHAMOI (Requerido) -->
+                    <div class="form-group full-width">
+                        <label for="pregunta">Pregunta o Consulta para CHAMOI *</label>
+                        <textarea id="pregunta" th:field="*{pregunta}" class="form-control" rows="3"
+                                  th:classappend="${#fields.hasErrors('pregunta')} ? 'is-invalid' : ''"
+                                  placeholder="Ej. ¿Existen condiciones seguras de viento y oleaje para salir a zarpar en horas de la madrugada?"></textarea>
+                        <div class="field-error" th:if="${#fields.hasErrors('pregunta')}" th:errors="*{pregunta}"></div>
+                    </div>
+
+                    <!-- Observaciones Adicionales -->
+                    <div class="form-group full-width">
+                        <label for="observaciones">Observaciones de la Embarcación / Seguridad</label>
+                        <input type="text" id="observaciones" th:field="*{observaciones}" class="form-control"
+                               placeholder="Ej. Embarcación con radiobaliza y motor fuera de borda...">
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                    <a th:href="@{/pescador/inicio}" class="btn btn-outline">Cancelar</a>
+                    <button type="submit" class="btn btn-pescador">
+                        <span>⚓</span>
+                        <span>Solicitar Análisis</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

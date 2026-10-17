@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Historial de Análisis Pesqueros', 'historial', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Historial de Análisis Pesqueros</h1>
+                <p style="color: var(--text-muted); margin-top: 0.25rem;">
+                    Revisa las evaluaciones de riesgo marítimo y recomendaciones oceanográficas previas para tus faenas.
+                </p>
+            </div>
+            <a th:href="@{/pescador/analisis/nuevo}" class="btn btn-pescador">➕ Nuevo Análisis</a>
+        </div>
+
+        <div class="table-card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Especie</th>
+                            <th>Consulta / Resumen</th>
+                            <th>Estado</th>
+                            <th>Nivel de Riesgo</th>
+                            <th style="text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(analisis)}">
+                            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2.5rem;">
+                                No tienes análisis pesqueros registrados aún. ¡Solicita tu primer análisis!
+                            </td>
+                        </tr>
+                        <tr th:each="a : ${analisis}">
+                            <td style="font-weight: 700;" th:text="${a.id}">1</td>
+                            <td th:text="${a.fechaSolicitud != null ? #temporals.format(a.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '-'}">01/01/2026</td>
+                            <td style="font-weight: 600;" th:text="${a.situacionPesquera != null && a.situacionPesquera.especie != null ? a.situacionPesquera.especie.nombre : 'General'}">Anchoveta</td>
+                            <td style="font-size: 0.85rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" th:text="${a.resumenSolicitud}">¿Condiciones seguras para zarpar?</td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${a.estado != null && a.estado.name() == 'COMPLETADO' ? 'badge-activo' : (a.estado != null && a.estado.name() == 'ERROR' ? 'badge-inactivo' : 'badge-info')}"
+                                      th:text="${a.estado}">COMPLETADO</span>
+                            </td>
+                            <td>
+                                <span th:if="${a.resultadoAnalisis != null}" class="prioridad-tag"
+                                      th:classappend="${a.resultadoAnalisis.nivelRiesgo != null && a.resultadoAnalisis.nivelRiesgo.name() == 'ALTO' ? 'alta' : (a.resultadoAnalisis.nivelRiesgo != null && a.resultadoAnalisis.nivelRiesgo.name() == 'MEDIO' ? 'media' : 'baja')}"
+                                      th:text="${a.resultadoAnalisis.nivelRiesgo}">MEDIO</span>
+                                <span th:unless="${a.resultadoAnalisis != null}" style="color: var(--text-muted);">-</span>
+                            </td>
+                            <td style="text-align: right;">
+                                <a th:href="@{/pescador/analisis/{id}(id=${a.id})}" class="btn btn-outline btn-sm">
+                                    Ver Resultado →
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

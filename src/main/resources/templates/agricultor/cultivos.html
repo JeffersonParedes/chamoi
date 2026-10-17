@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout('Catálogo de Cultivos', 'cultivos', ~{::content})}">
+<body>
+    <div th:fragment="content">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">Catálogo de Cultivos</h1>
+            <p style="color: var(--text-muted); margin-top: 0.35rem;">
+                Explora las fichas técnicas de los cultivos agrícolas monitoreados por la plataforma CHAMOI.
+            </p>
+        </div>
+
+        <div th:if="${#lists.isEmpty(cultivos)}" class="alert alert-info">
+            <span>ℹ️</span>
+            <span>No hay cultivos registrados en este momento.</span>
+        </div>
+
+        <div class="card-grid" th:unless="${#lists.isEmpty(cultivos)}">
+            <div class="catalog-card" th:each="cultivo : ${cultivos}">
+                <div>
+                    <div class="catalog-card-header">
+                        <h3 class="catalog-card-title" th:text="${cultivo.nombre}">Maíz Amarillo</h3>
+                        <span class="badge badge-activo" th:text="${cultivo.tipo != null ? cultivo.tipo.name() : 'CEREAL'}">CEREAL</span>
+                    </div>
+                    <p class="catalog-card-body" 
+                       th:text="${cultivo.descripcion != null && !cultivo.descripcion.isBlank() ? (cultivo.descripcion.length() > 140 ? cultivo.descripcion.substring(0, 140) + '...' : cultivo.descripcion) : 'Sin descripción detallada.'}">
+                        Descripción breve del cultivo agrícola.
+                    </p>
+                </div>
+                <div class="catalog-card-footer">
+                    <a th:href="@{/agricultor/cultivos/{id}(id=${cultivo.id})}" class="btn btn-outline btn-sm">
+                        Ver Detalle →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

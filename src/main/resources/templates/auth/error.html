@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error de Acceso - CHAMOI</title>
+    <link rel="stylesheet" th:href="@{/css/chamoi.css}">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-card" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🚫</div>
+            <h1 style="font-size: 1.6rem; color: #dc2626; margin-bottom: 0.5rem;">Acceso Denegado</h1>
+            
+            <div class="alert alert-danger" style="margin: 1.25rem 0; text-align: left;">
+                <span th:text="${msg != null ? msg : 'No tienes los permisos necesarios para acceder a este recurso o ha ocurrido un error.'}">
+                    Mensaje de error
+                </span>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <a th:href="@{/}" class="btn btn-primary">Volver al Inicio</a>
+            </div>
+            
+            <div class="auth-footer">
+                <p>O si deseas cambiar de cuenta, <a th:href="@{/login}">inicia sesión aquí</a></p>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; CHAMOI - Análisis Agrícola y Pesquero del Perú
+    </footer>
+</body>
+</html>
+
